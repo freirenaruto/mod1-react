@@ -1,52 +1,53 @@
 import React, { useState, useEffect } from "react";
 
-import api from './services/api';
+import api from "./services/api";
 import "./styles.css";
 
 //O app funcionou, porem os testes não executam.
-function App() {
+export default function App() {
   const [repo, setRepo] = useState([]);
 
-  useEffect(()=>{
-    async function loadRepos(){
-      try{
-        const resp = await api.get('/repositories');
+  useEffect(() => {
+    async function loadRepos() {
+      try {
+        const resp = await api.get("/repositories");
 
-        if(!resp.data){
+        if (!resp) {
           throw new Error("Não foi possivel realizar busca");
         }
 
         setRepo([...resp.data]);
-      }catch(err){
+      } catch (err) {
         alert(err.message);
       }
     }
 
+    console.log("cap");
     loadRepos();
-  }, [repo]);
+  }, []);
 
   async function handleAddRepository() {
     const data = {
-      title: "React",
-      url: "testando",
-      techs: ["React", "Node"]
-    }
+      id: "123",
+      url: "https://github.com/josepholiveira",
+      title: "Desafio ReactJS",
+      techs: ["React", "Node.js"],
+    };
 
-    try{
+    try {
       const res = await api.post(`/repositories`, data);
 
       setRepo([...repo, data]);
-    }catch(err){
+    } catch (err) {
       alert(err.message);
     }
   }
 
   async function handleRemoveRepository(id) {
-    try{
+    try {
       await api.delete(`/repositories/${id}`);
-
-      setRepo(repo.filter(rep => rep.id !== id));
-    }catch(err){
+      setRepo(repo.filter((rep) => rep.id !== id));
+    } catch (err) {
       alert(err.message);
     }
   }
@@ -54,7 +55,7 @@ function App() {
   return (
     <div>
       <ul data-testid="repository-list">
-        {repo.map(rep => (
+        {repo.map((rep) => (
           <li key={rep.id}>
             <span>{rep.title}</span>
 
@@ -69,5 +70,3 @@ function App() {
     </div>
   );
 }
-
-export default App;
